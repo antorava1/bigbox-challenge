@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <Experiencia/>
+    <ActividadesID/>
   </div>
 </template>
 
 <script>
 
 // import Actividades from './components/Actividades.vue'
-import Experiencia from './components/Experiencia.vue'
+import ActividadesID from './components/ActividadesID.vue'
 
 export default {
   name: 'App',
   components: {
-    Experiencia
+    ActividadesID
   }
 }
 </script>

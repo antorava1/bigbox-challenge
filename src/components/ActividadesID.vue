@@ -1,49 +1,76 @@
 <template>
     <main class="main">
-        <header>
-            <svg xmlns="http://www.w3.org/2000/svg" class="image">
-                <rect width="100%" height="100%" fill="#868e96"></rect>
-                <text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image cap</text>
-            </svg>
+        <header v-for="todo in todos" :key="todo.id">
+            <div>
+              <img src="../assets/card4.jpg" class="image">
             <div class="header-text">
-                <h3 class="title">¡1 player Start!</h3>
-                <h3 class="description">Una hora de juego ilimitado en tus fichines favoritos en Bar el Destello, con una cerveza y sándwich a elección.</h3>
+                <h3 class="title">{{todo.title}}</h3>
+                <h3 class="description">{{todo.activity.description}}</h3>
                 <div>
                     <img class="people-logo" src="../assets/2people.svg">
-                    <h3 class="people">Para 2 personas</h3>
+                    <h3 class="people">Para {{todo.participants === 1 ? todo.participants + ' persona' : todo.participants + ' personas'}}</h3>
                 </div>
                 <div>
                     <img class="location-logo" src="../assets/locationblack.svg">
                     <h3 class="location">Ubicación</h3>
                 </div>
-                <h3 class="points">2500 puntos</h3>
+                <h3 class="points">{{todo.points}} puntos</h3>
             </div>
         </header>
         <aside class="includes">
             <h3 class="subtitle">¿Qué incluye?</h3>
             <img class="underlined" src="../assets/underlined.svg">
-            <ul class="list-text">
-                <li>Un pase libre de 1 hora en Bar el Destello, para jugar a tus fichines retro favoritos.</li>
-                <li>Una cerveza, sidra o vermut y sandwich a elección.</li>
+            <p><strong>BOX PICOTEO</strong></p>
+            <ul>
+                <li>500gr Quiche.</li>
+                <li>600gr Aros de cebolla.</li>
+                <li>500gr Bondiola braseada.</li>
+                <li>8 Empanadas de lomo.</li>
+                <li>6 Croquetas de cordero.</li>
+                <li>8 Buñuelos de espinaca.</li>
+                <li>8 Canastitas de gruyere y champignon.</li>
+                <li>700gr Papas fritas con cheddar y cebolla de verdeo.</li>
+                <li>Alioli-Barbacoa-Honey Mustard.</li>
+                <li>4 Postre Oreo.</li>
             </ul>
-            <h3 class="includes-text">Hay 14 arcades y un flipper en sus muebles originales. Para saber si todavía sos tan bueno como crees en el Tetris, o para terminar de una vez por todas el Wonderboy. </h3>
+            <p><em>Recibirán una box con los platos envasados al vacio. Estarán listos para regenerar y terminarlos con las instrucciones correspondientes.</em></p>
         </aside>
         <aside class="includes">
             <div>
                 <img class="rules-logo" src="../assets/ruleslogo.svg">
                 <h3 class="subtitle2">Reglas: </h3>
-                <h3 class="rules-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi est nunc pretium vitae vulputate purus.</h3>
+                <h4 class="rules-description">Envío incluído de lunes a sábados en las siguientes zonas: Beccar, San Isidro, Martínez, Acassuso, La Lucila, Olivos, Vicente López. Para reservar comunicarse con 48hs de anticipación por mail a info@cateringlaestaca.com o los siguientes números: 11 3908 0802 o 4766 6625 interno 133.</h4>
             </div>
         </aside>
-        <section class="other-activities">
-            <h3 class="subtitle3">Otras actividades similares</h3>
-        </section>
     </main>
 </template>
 
 <script>
 export default {
-
+  data () {
+    return {
+      todos: null
+    }
+  },
+  mounted () {
+    this.getTodos()
+  },
+  methods: {
+    getTodos () {
+      fetch('https://json-biglifeapp.herokuapp.com/activity?_limit=1')
+        .then(res => res.json())
+        .then(data => {
+          console.log('Antes de parsear', data)
+          this.todos = data.map(el => {
+            return {
+              ...el,
+              activity: JSON.parse(el.activity)
+            }
+          })
+          console.log('Parseado activity', this.todos)
+        })
+    }
+  }
 }
 </script>
 
@@ -58,11 +85,9 @@ export default {
 }
 .image {
     height: 371px;
-    width: 563px;
-    left: 100px;
     top: 111px;
-    border-radius: 4px;
-
+    border-radius: 8px;
+    object-fit: cover;
 }
 .includes {
     margin-top: 180px;
@@ -110,8 +135,8 @@ export default {
     color: #464646
  }
  .description {
-    height: 46px;
-    width: 466px;
+    height: 70px;
+    width: 600px;
     left: 696px;
     top: 169px;
     font-size: 18px;
@@ -197,18 +222,6 @@ export default {
     text-align: left;
     color:#464646
  }
- .rules-text {
-    height: 52px;
-    width: 553px;
-    left: 102px;
-    top: 995px;
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 300;
-    line-height: 23px;
-    letter-spacing: 0px;
-    text-align: left;
- }
  .subtitle3{
     height: 30px;
     width: 292px;
@@ -221,5 +234,18 @@ export default {
     letter-spacing: -1px;
     text-align: left;
     color:#464646
+ }
+ .rules-description {
+    height: 52px;
+    width: 553px;
+    left: 102px;
+    top: 995px;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 23px;
+    letter-spacing: 0px;
+    text-align: left;
+    color: #4f4f4f
  }
 </style>

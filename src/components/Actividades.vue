@@ -1,11 +1,9 @@
 <template>
+  <div class="container">
     <div class="card">
         <div class="card-info" v-for="todo in todos" :key="todo.id">
             <div class="card-header">
-               <svg xmlns="http://www.w3.org/2000/svg" class="image">
-                  <rect width="100%" height="100%" fill="#868e96"></rect>
-                  <text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image cap</text>
-               </svg>
+               <img src="../assets/card4.jpg" class="image">
             </div>
             <div>
                 <img class="people-logo" src="../assets/2people.svg">
@@ -15,20 +13,21 @@
                 <img class="location-logo" src="../assets/location.svg">
                 <h3 class="location">Ubicación</h3>
             </div>
-            <h3 class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae impedit dolorem unde accusamus repellendus iste quo voluptatem inventore animi quam, modi neque quod adipisci atque earum rerum corporis ipsa qui?</h3>
+            <h3 class="description">{{todo.activity.description}}</h3>
             <h3 class="points">{{todo.points + " puntos"}}</h3>
         </div>
     </div>
+    <div class="text-center">
+  </div>
+  </div>
 </template>
 
 <script>
-
-import axios from 'axios'
-
-export default{
+export default {
   data () {
     return {
-      todos: null
+      todos: null,
+      page: 1
     }
   },
   mounted () {
@@ -36,15 +35,30 @@ export default{
   },
   methods: {
     getTodos () {
-      axios.get('https://json-biglifeapp.herokuapp.com/activity?_limit=9')
-        .then(response => {
-          console.log(response)
-          this.todos = response.data
+      fetch('https://json-biglifeapp.herokuapp.com/activity/?_limit=9')
+        .then(res => res.json())
+        .then(data => {
+          console.log('Antes de parsear', data)
+          this.todos = data.map(el => {
+            return {
+              ...el,
+              activity: JSON.parse(el.activity)
+            }
+          })
+          console.log('Parseado activity', this.todos)
         })
-        .catch(e => console.log(e))
     }
   }
 }
+
+var parse = require('parse-link-header')
+var linkHeader =
+  '<http://json-biglifeapp.herokuapp.com/activity?_page=2>; rel="next", ' +
+  '<http://json-biglifeapp.herokuapp.com/activity?_page=1>; rel="first", ' +
+  '<http://json-biglifeapp.herokuapp.com/activity?_page=213>; rel="last"'
+
+var parsed = parse(linkHeader)
+console.log(parsed)
 </script>
 
 <style>
@@ -58,7 +72,6 @@ export default{
     row-gap: 50px;
  }
  .card-info {
-    background-color: darkorchid;
     height: 398px;
     width: 369px;
     left: 100px;
@@ -67,7 +80,7 @@ export default{
     font-family: Quicksand;
  }
  .image {
-   height: 170px;
+   height: 200px;
    width: 369px;
    left: 0px;
    top: 0px;
